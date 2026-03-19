@@ -15,10 +15,6 @@
 
 REST API for the [Kronos](https://github.com/Fernando-CR19/kronos-app) mobile app — a personal calendar with offline-first sync, color tags, and local notifications. Built with [NestJS](https://github.com/nestjs/nest), Prisma, and PostgreSQL.
 
-## Database Schema
-
-![Database Schema](docs/db-diagram.svg)
-
 ## Requirements
 
 - [Node.js](https://nodejs.org/) v18+
