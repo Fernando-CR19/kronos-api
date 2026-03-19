@@ -13,7 +13,11 @@
 
 ## Description
 
-REST API for the [Kronos](https://github.com/your-user/kronos-app) mobile app — a personal calendar with offline-first sync, color tags, and local notifications. Built with [NestJS](https://github.com/nestjs/nest), Prisma, and PostgreSQL.
+REST API for the [Kronos](https://github.com/Fernando-CR19/kronos-app) mobile app — a personal calendar with offline-first sync, color tags, and local notifications. Built with [NestJS](https://github.com/nestjs/nest), Prisma, and PostgreSQL.
+
+## Database Schema
+
+![Database Schema](docs/db-diagram.svg)
 
 ## Requirements
 
@@ -43,6 +47,9 @@ DB_PASSWORD=your_password
 DB_NAME=mnemo
 
 DATABASE_URL=postgresql://your_user:your_password@localhost:5434/mnemo?schema=public
+
+ADM_EMAIL=your_admin_email
+ADM_PASS=your_admin_password
 ```
 
 ### 3. Start the database
@@ -61,7 +68,19 @@ $ yarn db:start
 $ yarn prisma migrate deploy
 ```
 
-### 5. Start the API
+### 5. Generate Prisma client
+
+```bash
+$ yarn prisma generate
+```
+
+### 6. Run the seed
+
+```bash
+$ yarn seed
+```
+
+### 7. Start the API
 
 ```bash
 # Development
