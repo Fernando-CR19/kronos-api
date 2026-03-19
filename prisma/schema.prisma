@@ -12,10 +12,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EnumSystemParamsModules {
+  AUTH
+
+  @@map("enum_system_params_modules")
+}
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid()) @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  name     String
+  username String  @unique
+  email    String  @unique
+  phone    String?
+  password String
+  chat_id  String? @unique
+
+  user_has_permissions UsersHasPermissions[]
 
   @@map("users")
+}
+
+model UsersHasPermissions {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  user_id       Int
+  permission_id Int
+
+  user       User        @relation(fields: [user_id], references: [id])
+  permission Permissions @relation(fields: [permission_id], references: [id])
+
+  @@map("users_has_permissions")
+}
+
+model Permissions {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  label   String
+  module  String @default("Usuários")
+  key     String @unique
+  message String
+
+  users_has_permissions UsersHasPermissions[]
+
+  @@map("permissions")
+}
+
+model SystemParams {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  key         String                  @unique
+  value       String
+  module      EnumSystemParamsModules
+  description String?
+
+  @@map("system_params")
 }
