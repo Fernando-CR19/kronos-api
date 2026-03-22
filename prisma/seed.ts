@@ -72,6 +72,7 @@ async function createAdminUser() {
         username: 'admin',
         email: process.env.ADM_EMAIL || 'admin@admin.com',
         password: bcrypt.hashSync(process.env.ADM_PASS || 'admin', salt),
+        phone: process.env.ADM_PHONE || '85999999999',
       },
     });
 
