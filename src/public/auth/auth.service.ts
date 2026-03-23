@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/shared/services/prisma/prisma.service';
@@ -25,7 +24,7 @@ export class AuthService {
       });
 
       if (userExist) {
-        throw new ConflictException('Email já cadastrado no sistema.');
+        throw new ConflictException('Email already registered in the system.');
       }
 
       const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -58,7 +57,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new UnauthorizedException('Invalid credentials');
       }
 
       const passwordMatch = await bcrypt.compare(
@@ -81,10 +80,7 @@ export class AuthService {
         access_token,
       };
     } catch (error) {
-      if (
-        error instanceof NotFoundException ||
-        error instanceof UnauthorizedException
-      ) {
+      if (error instanceof UnauthorizedException) {
         throw error;
       }
       throw new InternalServerErrorException('Error while trying to log in.');
