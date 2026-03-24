@@ -4,9 +4,17 @@ import { AppService } from './app.service';
 import { PrismaModule } from './shared/services/prisma/prisma.module';
 import { AuthModule } from './public/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './shared/services/redis/redis.module';
+import { OtpModule } from './shared/services/otp/otp.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    AuthModule,
+    RedisModule,
+    OtpModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
