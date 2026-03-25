@@ -4,8 +4,9 @@ import { randomInt } from 'crypto';
 
 @Injectable()
 export class OtpService {
-  private readonly OTP_TTL = 200;
+  private readonly OTP_TTL = 120;
   private readonly MAX_ATTEMPTS = 3;
+  private readonly VERIFIED_TTL = 600;
 
   constructor(private readonly redis: RedisService) {}
 
@@ -38,11 +39,25 @@ export class OtpService {
     }
 
     if (data.code !== code) {
-      await this.redis.set(`otp:${email}`, JSON.stringify(data), this.OTP_TTL);
+      await this.redis.set(`otp:${email}`, JSON.stringify(data));
       return { valid: false, message: 'Invalid code' };
     }
 
     await this.redis.delete(`otp:${email}`);
+    await this.storeVerified(email);
     return { valid: true, message: 'Valid code' };
+  }
+
+  async storeVerified(email: string): Promise<void> {
+    await this.redis.set(`otp_verified:${email}`, 'true', this.VERIFIED_TTL);
+  }
+
+  async isVerified(email: string): Promise<boolean> {
+    const raw = await this.redis.get(`otp_verified:${email}`);
+    return raw === 'true';
+  }
+
+  async deleteVerified(email: string): Promise<void> {
+    await this.redis.delete(`otp_verified:${email}`);
   }
 }
