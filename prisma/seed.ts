@@ -76,6 +76,8 @@ async function createAdminUser() {
       },
     });
 
+    console.log('Usuário admin cadastrado com sucesso!');
+
     return user;
   } else {
     console.log('Usuário admin já cadastrado!');
