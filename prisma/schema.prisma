@@ -26,12 +26,14 @@ model User {
   active     Boolean  @default(true)
   deleted    Boolean  @default(false)
 
-  name     String
-  username String  @unique
-  email    String  @unique
-  phone    String?
-  password String
-  chat_id  String? @unique
+  name         String
+  username     String
+  email        String  @unique
+  phone        String?
+  password     String
+  chat_id      String? @unique
+  google_id    String? @unique
+  google_email String?
 
   user_has_permissions UsersHasPermissions[]
 
