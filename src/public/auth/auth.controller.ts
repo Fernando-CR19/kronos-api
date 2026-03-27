@@ -1,10 +1,21 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ValidateOtpDto } from './dto/validate-otp-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { LinkGoogleAccountDto } from './dto/link-google-account.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -38,5 +49,24 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @Get('google-callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req: any) {
+    return this.authService.googleLogin(req.user);
+  }
+
+  @Post('google-link')
+  @HttpCode(HttpStatus.OK)
+  async linkGoogleAccount(@Body() linkGoogleAccount: LinkGoogleAccountDto) {
+    return this.authService.linkGoogleAccount(
+      linkGoogleAccount.email,
+      linkGoogleAccount.googleId,
+    );
   }
 }

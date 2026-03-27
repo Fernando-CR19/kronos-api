@@ -16,6 +16,7 @@ import { EmailService } from 'src/shared/services/email/email.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ValidateOtpDto } from './dto/validate-otp-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -139,5 +140,80 @@ export class AuthService {
     });
 
     return { message: 'Password updated successfully' };
+  }
+
+  async googleLogin(googleUser: {
+    googleId: string;
+    email: string;
+    name: string;
+  }): Promise<{
+    message: string;
+    access_token?: string;
+    account_exists?: boolean;
+    first_login?: boolean;
+  }> {
+    const userByGoogleId = await this.prisma.user.findUnique({
+      where: { google_id: googleUser.googleId },
+    });
+
+    if (userByGoogleId) {
+      const payload = { sub: userByGoogleId.uuid };
+      const access_token = await this.jwtService.signAsync(payload);
+      return { message: 'Login successfully', access_token };
+    }
+
+    const userByEmail = await this.prisma.user.findUnique({
+      where: { email: googleUser.email },
+    });
+
+    if (userByEmail) {
+      return {
+        message: 'Account already exists',
+        account_exists: true,
+      };
+    }
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        name: googleUser.name,
+        email: googleUser.email,
+        google_id: googleUser.googleId,
+        google_email: googleUser.email,
+        username: googleUser.name.toLowerCase().replace(/\s+/g, '_'),
+        password: await bcrypt.hash(randomUUID(), 10),
+      },
+    });
+
+    const payload = { sub: newUser.uuid };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    return {
+      message: 'Login successfully',
+      access_token,
+      first_login: true,
+    };
+  }
+
+  async linkGoogleAccount(email: string, googleId: string) {
+    await this.prisma.user.update({
+      where: { email },
+      data: {
+        google_id: googleId,
+        google_email: email,
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const payload = { sub: user.uuid };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    return { message: 'Account linked successfully', access_token };
   }
 }

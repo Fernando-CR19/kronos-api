@@ -62,7 +62,7 @@ async function createPermissionsList() {
 
 async function createAdminUser() {
   const userExist = await prisma.user.findUnique({
-    where: { username: 'admin' },
+    where: { email: process.env.ADM_EMAIL },
   });
 
   if (!userExist) {
