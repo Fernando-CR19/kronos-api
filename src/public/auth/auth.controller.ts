@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register-auth.dto';
@@ -57,8 +58,18 @@ export class AuthController {
 
   @Get('google-callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthCallback(@Req() req: any) {
-    return this.authService.googleLogin(req.user);
+  async googleAuthCallback(@Req() req: any, @Res() res: any) {
+    const result = await this.authService.googleLogin(req.user);
+
+    if (result.account_exists) {
+      return res.redirect(
+        `kronos://callback?account_exists=true&email=${req.user.email}&google_id=${req.user.googleId}`,
+      )
+    }
+
+    return res.redirect(
+      `kronos://callback?token=${result.access_token}&first_login=${result.first_login || false}`,
+    )
   }
 
   @Post('google-link')
