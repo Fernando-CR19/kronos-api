@@ -9,6 +9,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
@@ -17,6 +18,7 @@ import { ValidateOtpDto } from './dto/validate-otp-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { LinkGoogleAccountDto } from './dto/link-google-account.dto';
+import { GoogleUser } from '../../shared/interfaces/google-user.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -58,18 +60,19 @@ export class AuthController {
 
   @Get('google-callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthCallback(@Req() req: any, @Res() res: any) {
-    const result = await this.authService.googleLogin(req.user);
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const user = req.user as GoogleUser;
+    const result = await this.authService.googleLogin(user);
 
     if (result.account_exists) {
       return res.redirect(
-        `kronos://callback?account_exists=true&email=${req.user.email}&google_id=${req.user.googleId}`,
-      )
+        `kronos://callback?account_exists=true&email=${user.email}&google_id=${user.googleId}`,
+      );
     }
 
     return res.redirect(
       `kronos://callback?token=${result.access_token}&first_login=${result.first_login || false}`,
-    )
+    );
   }
 
   @Post('google-link')

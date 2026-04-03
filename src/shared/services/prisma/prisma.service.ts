@@ -12,7 +12,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     } catch (error) {
       this.logger.error(
         'Não foi possível conectar ao banco de dados',
-        error.message,
+        error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
     }

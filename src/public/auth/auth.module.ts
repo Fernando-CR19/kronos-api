@@ -4,10 +4,10 @@ import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaModule } from 'src/shared/services/prisma/prisma.module';
+import { PrismaModule } from '../../shared/services/prisma/prisma.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { GoogleStrategy } from 'src/shared/strategy/google.strategy';
-
+import { GoogleStrategy } from '../../shared/strategy/google.strategy';
+import { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { GoogleStrategy } from 'src/shared/strategy/google.strategy';
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: (configService.get<string>('JWT_EXPIRES_IN') ||
-            '86400s') as any,
+            '86400s') as StringValue,
           algorithm: 'HS512',
         },
       }),

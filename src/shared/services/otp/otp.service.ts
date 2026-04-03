@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 import { randomInt } from 'crypto';
+import { OtpData } from '../../interfaces/otp-data.interface';
 
 @Injectable()
 export class OtpService {
@@ -29,7 +30,7 @@ export class OtpService {
       return { valid: false, message: 'Code not found or expired' };
     }
 
-    const data = JSON.parse(raw);
+    const data = JSON.parse(raw) as OtpData;
 
     data.attempts++;
 

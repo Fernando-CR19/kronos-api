@@ -6,13 +6,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/shared/services/prisma/prisma.service';
+import { PrismaService } from '../../shared/services/prisma/prisma.service';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { OtpService } from 'src/shared/services/otp/otp.service';
-import { EmailService } from 'src/shared/services/email/email.service';
+import { OtpService } from '../../shared/services/otp/otp.service';
+import { EmailService } from '../../shared/services/email/email.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ValidateOtpDto } from './dto/validate-otp-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
