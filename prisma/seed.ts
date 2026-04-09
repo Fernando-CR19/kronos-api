@@ -23,7 +23,7 @@ async function createSystemParams() {
 async function createPermissionsList() {
   const currentKeys = permissionsList.map((permission) => permission.key);
 
-  for await (const permission of permissionsList) {
+  for (const permission of permissionsList) {
     const p = await prisma.permissions.findFirst({
       where: { key: permission.key },
     });
