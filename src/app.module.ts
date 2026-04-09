@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './shared/services/redis/redis.module';
 import { OtpModule } from './shared/services/otp/otp.module';
 import { EmailModule } from './shared/services/email/email.module';
+import { TelegramModule } from './shared/services/telegram/telegram.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { EmailModule } from './shared/services/email/email.module';
     RedisModule,
     OtpModule,
     EmailModule,
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
