@@ -18,6 +18,26 @@ enum EnumSystemParamsModules {
   @@map("enum_system_params_modules")
 }
 
+enum EnumRecurrence {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+
+  @@map("enum_recurrence")
+}
+
+enum EnumNotificationTime {
+  MIN_5
+  MIN_10
+  MIN_30
+  HOUR_1
+  HOUR_2
+  DAY_1
+
+  @@map("enum_notification_time")
+}
+
 model User {
   id         Int      @id @default(autoincrement())
   uuid       String   @unique @default(uuid()) @db.Uuid
@@ -36,6 +56,8 @@ model User {
   google_email String?
 
   user_has_permissions UsersHasPermissions[]
+  tags                 Tag[]
+  events               Event[]
 
   @@map("users")
 }
@@ -71,6 +93,97 @@ model Permissions {
   users_has_permissions UsersHasPermissions[]
 
   @@map("permissions")
+}
+
+model Tag {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  name       String
+  color      String
+  icon       String
+  is_default Boolean @default(false)
+
+  user_id Int?
+  user    User? @relation(fields: [user_id], references: [id])
+
+  event_tags EventTag[]
+
+  @@map("tags")
+}
+
+model Event {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid()) @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  active     Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  title       String
+  description String?
+  start_at    DateTime
+  end_at      DateTime
+  all_day     Boolean        @default(false)
+  recurrence  EnumRecurrence @default(NONE)
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
+
+  event_tags       EventTag[]
+  event_exceptions EventException[]
+  notification     EventNotification?
+
+  @@map("events")
+}
+
+model EventTag {
+  id    Int @id @default(autoincrement())
+  order Int @default(0)
+
+  event_id Int
+  tag_id   Int
+
+  event Event @relation(fields: [event_id], references: [id])
+  tag   Tag   @relation(fields: [tag_id], references: [id])
+
+  @@map("event_tags")
+}
+
+model EventException {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  original_date   DateTime
+  new_title       String?
+  new_description String?
+  new_start_at    DateTime?
+  new_end_at      DateTime?
+  new_all_day     Boolean?
+  cancelled       Boolean   @default(false)
+
+  event_id Int
+  event    Event @relation(fields: [event_id], references: [id])
+
+  @@map("event_exceptions")
+}
+
+model EventNotification {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  time    EnumNotificationTime
+  enabled Boolean              @default(true)
+
+  event_id Int   @unique
+  event    Event @relation(fields: [event_id], references: [id])
+
+  @@map("event_notifications")
 }
 
 model SystemParams {
