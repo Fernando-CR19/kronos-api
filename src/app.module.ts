@@ -8,6 +8,7 @@ import { RedisModule } from './shared/services/redis/redis.module';
 import { OtpModule } from './shared/services/otp/otp.module';
 import { EmailModule } from './shared/services/email/email.module';
 import { TelegramModule } from './shared/services/telegram/telegram.module';
+import { EventsModule } from './modules/events/events.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TelegramModule } from './shared/services/telegram/telegram.module';
     OtpModule,
     EmailModule,
     TelegramModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
