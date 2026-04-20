@@ -9,6 +9,7 @@ import { OtpModule } from './shared/services/otp/otp.module';
 import { EmailModule } from './shared/services/email/email.module';
 import { TelegramModule } from './shared/services/telegram/telegram.module';
 import { EventsModule } from './modules/events/events.module';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EventsModule } from './modules/events/events.module';
     EmailModule,
     TelegramModule,
     EventsModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
