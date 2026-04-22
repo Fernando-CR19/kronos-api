@@ -10,6 +10,7 @@ import { EmailModule } from './shared/services/email/email.module';
 import { TelegramModule } from './shared/services/telegram/telegram.module';
 import { EventsModule } from './modules/events/events.module';
 import { TagsModule } from './modules/tags/tags.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TagsModule } from './modules/tags/tags.module';
     TelegramModule,
     EventsModule,
     TagsModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
